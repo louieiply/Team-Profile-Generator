@@ -13,6 +13,9 @@ class Intern extends Employee{
     getSchool(){
         return this.school;
     }
+    getRoleIcon(){
+        return `<i class="fas fa-user-graduate"></i>`;
+    }
 }
 
 module.exports = Intern;

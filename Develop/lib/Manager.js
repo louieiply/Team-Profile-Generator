@@ -13,6 +13,9 @@ class Manager extends Employee{
     getOfficeNumber(){
         return this.officeNumber;
     }
+    getRoleIcon(){
+        return `<i class="fas fa-mug-hot"></i>`;
+    }
 }
 
 module.exports = Manager;
