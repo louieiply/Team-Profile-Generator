@@ -5,8 +5,17 @@ const Manager = require("./lib/Manager");
 const fs = require("fs");
 const uuid = require("./src/uuid");
 const team_members = new Array();
-const roles = ["Intern","Engineer","Manager"];
+const roles = ["Intern","Engineer"];
+var roundCounter = 0;
 var memberCounter = [0,0,0];
+const init_question = [
+    {
+        type: "list",
+        name: "firstquestion",
+        message: "What role does your team member have?",
+        choices: ["Manager"],
+    }
+]
 const first_question = [
     {
         type: "list",
@@ -84,6 +93,7 @@ const generateHtml = async () =>{
     var cards = "";
     team_members.forEach(employee => {
         var icon = employee.getRoleIcon();
+        employee.name;
         var name = employee.getName();
         var role = employee.getRole();
         var id = employee.getId();
@@ -100,6 +110,9 @@ const generateHtml = async () =>{
 
             case "Manager":
                 roletext = "OfficeNumber: " + employee.getOfficeNumber();
+                break;
+            default:
+                roletext = "Employee: " + "I am a happy employee";
                 break;
         }
         cards += `        <div class="col-3">
@@ -131,11 +144,9 @@ const generateHtml = async () =>{
 <title>Team Portfolio</title>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid text-center">
-      <h3 class="">My Team</h3>
-    </div>
-  </nav>
+<header class="justify-content-center bg-primary" style="padding-top:20px; padding-bottom:20px;">
+    <h2 class="text-center text-light">Team Profile</h2>
+</header>
   <div class="container" style="margin-top: 10%;">
     <div class="row justify-content-center">` +
     cards+
@@ -153,13 +164,15 @@ const generateHtml = async () =>{
 const init = async () => {
     var exit = false;
     while(!exit){
-        const firstAns = await startPrompt(first_question);
+        const firstAns = roundCounter <1 ? await startPrompt(init_question) : await startPrompt(first_question);
+        roundCounter++;
         const {firstquestion} =  await firstAns;
         switch (firstquestion) {
             case "Intern":
                 memberCounter[0] += 1;
                 console.log(`A ${firstquestion} has been added to the Team`);
                 var answer = await startPrompt(intern_quest);
+                
                 var {email, fullName, school} = await answer;
                 team_members.push(new Intern(email,uuid(),fullName,school));
                 break;
@@ -182,12 +195,10 @@ const init = async () => {
                 break;
         }
         console.clear();
-        //Check at least 1 intern, engineer and manager are included.
-        if(memberCounter[0] <= 1 || memberCounter[1] <= 1 || memberCounter[2] <= 1){
-           var finished = await startPrompt(finish_quest);
-           var {finishOrNot} = finished;
-           exit = finishOrNot == "Yes" ? true:false;
-        }
+        var finished = await startPrompt(finish_quest);
+        var {finishOrNot} = finished;
+        exit = finishOrNot == "Yes" ? true:false;
+
     }
     await generateHtml();
 }
