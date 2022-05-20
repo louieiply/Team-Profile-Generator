@@ -55,7 +55,7 @@ const engineer_quest = [
     {
         type: "input",
         name: "github",
-        message: "What is the GitHub URL of this engineer?",
+        message: "What is the GitHub name of this engineer?",
     }
 ]
 const manager_quest = [
@@ -105,14 +105,11 @@ const generateHtml = async () =>{
                 break;
         
             case "Engineer":
-                roletext = "GitHub: " + employee.getGithub();
+                roletext = `GitHub: <a href="https://github.com/${employee.getGithub()}">${employee.getGithub()}</a>`;
                 break;
 
             case "Manager":
-                roletext = "OfficeNumber: " + employee.getOfficeNumber();
-                break;
-            default:
-                roletext = "Employee: " + "I am a happy employee";
+                roletext = `OfficeNumber: ${employee.getOfficeNumber()}`;
                 break;
         }
         cards += `        <div class="col-3">
@@ -174,21 +171,21 @@ const init = async () => {
                 var answer = await startPrompt(intern_quest);
                 
                 var {email, fullName, school} = await answer;
-                team_members.push(new Intern(email,uuid(),fullName,school));
+                team_members.push(new Intern(fullName,uuid(),email,school));
                 break;
             case "Engineer":
                 memberCounter[1] += 1;
                 console.log(`A ${firstquestion} has been added to the Team`);
                 var answer = await startPrompt(engineer_quest);
                 var {email, fullName, github} = answer;
-                team_members.push(new Engineer(email,uuid(),fullName,github));
+                team_members.push(new Engineer(fullName,uuid(),email,github));
                 break;
             case "Manager":
                 memberCounter[2] += 1;
                 console.log(`A ${firstquestion} has been added to the Team`);
                 var answer = await startPrompt(manager_quest);
                 var {email, fullName, officeNumber} = answer;
-                team_members.push(new Manager(email,uuid(),fullName,officeNumber));
+                team_members.push(new Manager(fullName,uuid(),email,officeNumber));
                 break;
             default:
                 console.log(`A ${firstquestion} has been added to the Team`);
